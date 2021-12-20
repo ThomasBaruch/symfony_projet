@@ -99,4 +99,19 @@ class AdminProductController extends AbstractController
 
         return $this->render('admin/product_add.html.twig', ['productForm' => $productForm->createView()]);
     }
+
+
+    /**
+     * @Route("/admin/delete/product/{id}", name="admin_delete_product")
+     */
+    public function adminDeleteProduct($id, ProductRepository $productRepository, EntityManagerInterface $entityManagerInterface)
+    {
+        $product = $productRepository->find($id);
+
+        $entityManagerInterface->remove($product);
+        $entityManagerInterface->flush();
+        $this->addFlash('notice', 'Votre produit a été supprimé');
+
+        return $this->redirectToRoute('admin_list_product');
+    }
 }
