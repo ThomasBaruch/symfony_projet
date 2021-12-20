@@ -1,0 +1,14 @@
+{% extends "front/base.html.twig" %}
+
+
+{% block main %}
+
+
+	{% for licence in licences %}
+		<h2>{{licence.name}}</h2>
+		<h3>{{licence.description}}</h3>
+        <hr>
+	{% endfor %}
+
+
+{% endblock %}

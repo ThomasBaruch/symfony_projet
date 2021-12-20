@@ -1,0 +1,15 @@
+{% extends "front/base.html.twig" %}
+
+{% block main %}
+
+	<h2>{{ category.name }}</h2>
+	<h3>{{ category.description }}</h3>
+
+
+	{% for image in category.media %}
+
+		<img src="{{ asset('media/' ~ image.src )}}" alt="{{ image.alt }}">
+
+	{% endfor %}
+
+{% endblock %}

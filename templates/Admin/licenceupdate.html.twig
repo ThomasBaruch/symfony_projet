@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+    </head>
+    <body>
+
+
+      {{ form_start(licenceForm) }}
+
+        {{ form_label(licenceForm.name, 'Titre de la catégorie : ', {'label_attr' : {'class' : 'label'} } ) }}
+        {{ form_widget(licenceForm.name, {'attr' : {'placeholder' : 'Titre de la catégorie ', 'class' : 'title'} } ) }}
+
+        {{ form_label(licenceForm.description, 'Contenu de la catégorie : ', {'label_attr' : {'class' : 'label'} } ) }}
+        {{ form_widget(licenceForm.description, {'attr' : {'placeholder' : 'Contenu de la catégorie '} } ) }}
+
+        {{ form_widget(licenceForm.submit, {'attr' : {'label' : 'Enregistrer' } } ) }}
+
+      {{ form_end(licenceForm) }}
+
+    </body>
+</html>

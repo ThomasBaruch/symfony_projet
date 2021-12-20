@@ -1,0 +1,13 @@
+{% extends "admin/base.html.twig" %}
+
+{% block main %}
+
+	<h2>{{ licence.name }}</h2>
+	<h3>{{ licence.description }}</h3>
+
+
+
+		<img src="{{ asset('media/' ~ licence.media )}}">
+
+
+{% endblock %}
