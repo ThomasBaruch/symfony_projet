@@ -6,6 +6,7 @@
 	<h1>Bienvenue sur Super-eDiscount</h1>
 	<h2>Vous trouverez tous sur les super-héros et leurs produits dérivés</h2>
 	<div class="alea">
+	{{category.name}}
 		{% for product  in category.products | slice(0, 3) %}
 			<div class="col">
 				<a href="{{ path('front_show_product', {'id' : product.id}) }}">
@@ -15,7 +16,7 @@
 		{% endfor %}
 	</div>
 	<div class="plus">
-		<a href="{{ path('front_product_list') }}">
+		<a href="{{ path('front_list_product') }}">
 			EN SAVOIR PLUS !
 		</a>
 	</div>

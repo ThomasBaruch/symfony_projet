@@ -11,7 +11,7 @@
 			{{product.price}}
 		</h3>
 
-		<img src="{{ product.media[0].src }}" alt="">
+		<img src="{{asset('media/' ~ product.media[0].src )}}" alt="">
 
 	{% endfor %}
 

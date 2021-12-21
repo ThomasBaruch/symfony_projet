@@ -58,7 +58,7 @@ class AdminMediaController extends AbstractController
             $entityManagerInterface->persist($media);
             $entityManagerInterface->flush();
 
-            return $this->redirectToRoute("admin_product_list");
+            return $this->redirectToRoute("admin_list_product");
         }
 
         return $this->render('admin/mediaform.html.twig', ['mediaForm' => $mediaForm->createView()]);
