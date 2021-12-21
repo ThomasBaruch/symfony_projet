@@ -1,14 +1,18 @@
 {% extends "admin/base.html.twig" %}
 
+
 {% block main %}
 
-	<h2>{{ product.name }}</h2>
-	<h3>{{ product.price }}</h3>
-	<h3>{{ product.stock }}</h3>
+	<h2>{{product.name}}</h2>
+	<h3>{{product.price}}
+		€</h3>
 
-	{% for image in product.media %}
+	<h4>{{product.licence.name}}</h4>
+	<h4>{{product.category.name}}</h4>
 
-		<img src="{{ image.src }}" alt="{{ image.alt }}">
+	{% for media in product.media %}
+
+		<img src="{{ media.src }}" alt="{{ media.alt }}">
 
 	{% endfor %}
 

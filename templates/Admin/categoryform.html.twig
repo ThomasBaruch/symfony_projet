@@ -1,25 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Document</title>
-    </head>
-    <body>
+{% extends "admin/base.html.twig" %}
 
+{% block main %}
 
-      {{ form_start(categoryForm) }}
-
-        {{ form_label(categoryForm.name, 'Titre de la catégorie : ', {'label_attr' : {'class' : 'label'} } ) }}
-        {{ form_widget(categoryForm.name, {'attr' : {'placeholder' : 'Titre de la catégorie ', 'class' : 'title'} } ) }}
-
-        {{ form_label(categoryForm.description, 'Contenu de la catégorie : ', {'label_attr' : {'class' : 'label'} } ) }}
-        {{ form_widget(categoryForm.description, {'attr' : {'placeholder' : 'Contenu de la catégorie '} } ) }}
-
-        {{ form_widget(categoryForm.submit, {'attr' : {'label' : 'Enregistrer' } } ) }}
-
-      {{ form_end(categoryForm) }}
-
-    </body>
-</html>
+	{{form(categoryForm)}}{% endblock %}

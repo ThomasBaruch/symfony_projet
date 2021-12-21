@@ -19,24 +19,6 @@ class CategoryRepository extends ServiceEntityRepository
         parent::__construct($registry, Category::class);
     }
 
-
-    public function searchByTerm($term)
-    {
-        // QueryBuilder permet de créer des requêtes SQL en PHP
-        $queryBuilder = $this->createQueryBuilder('category');
-
-        // Requête
-        $query = $queryBuilder
-            ->select('category')
-            ->where('category.name LIKE :term') // WHERE en SQL
-            ->orWhere('category.description LIKE :term')
-            ->setParameter('term', '%' . $term . '%')
-            // On attribue le term rentré et on sécurise
-            ->getQuery();
-
-        return $query->getResult();
-    }
-
     // /**
     //  * @return Category[] Returns an array of Category objects
     //  */

@@ -2,10 +2,11 @@
 
 {% block main %}
 
-	<h2>{{ category.name }}</h2>
-	<h3>{{ category.description }}</h3>
+	<h2>{{category.name}}</h2>
+	<p>{{category.description}}</p>
 
-
-		<img src="{{ asset('media/' ~ category.media )}}">
+	{% for product in category.products %}
+		<h3>{{product.name}}</h3>
+	{% endfor %}
 
 {% endblock %}
