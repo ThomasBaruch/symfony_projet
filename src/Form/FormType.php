@@ -2,22 +2,27 @@
 
 namespace App\Form;
 
-use App\Entity\Licence;
+use App\Entity\Media;
+use App\Entity\Product;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class LicenceType extends AbstractType
+class FormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('name')
-            ->add('description')
-            ->add('media', FileType::class, [
+            ->add('src', FileType::class, [
                 'mapped' => false
+            ])
+            ->add('title')
+            ->add('product', EntityType::class, [
+                'class' => Product::class,
+                'choice_label' => 'name'
             ])
             ->add('Enregistrer', SubmitType::class);
     }
@@ -25,7 +30,7 @@ class LicenceType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Licence::class,
+            'data_class' => Media::class,
         ]);
     }
 }

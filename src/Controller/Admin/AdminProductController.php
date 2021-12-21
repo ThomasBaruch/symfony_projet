@@ -6,15 +6,14 @@ use App\Entity\Product;
 use App\Form\ProductType;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 
 class AdminProductController extends AbstractController
 {
     /**
-     *@Route("/admin/products", name="admin_product_list")
+     * @Route("admin/products/", name="admin_list_product")
      */
     public function listProduct(ProductRepository $productRepository)
     {
@@ -22,7 +21,6 @@ class AdminProductController extends AbstractController
 
         return $this->render("admin/products.html.twig", ['products' => $products]);
     }
-
 
     /**
      * @Route("admin/product/{id}", name="admin_show_product")
@@ -35,23 +33,37 @@ class AdminProductController extends AbstractController
     }
 
     /**
-     * @Route("/admin/search/", name="admin_search")
+     * @Route("admin/update/product/{id}", name="admin_upadte_product")
      */
-    public function adminSearch(ProductRepository $productRepository, Request $request)
-    {
-        $term = $request->query->get('term');
+    public function updateProduct(
+        $id,
+        EntityManagerInterface $entityManagerInterface,
+        ProductRepository $productRepository,
+        Request $request
+    ) {
+        $product = $productRepository->find($id);
 
-        $products = $productRepository->searchByTerm($term);
+        $productForm = $this->createForm(ProductType::class, $product);
 
-        return $this->render('admin/search.html.twig', ['products' => $products]);
+        $productForm->handleRequest($request);
+
+        if ($productForm->isSubmitted() && $productForm->isValid()) {
+            $entityManagerInterface->persist($product);
+            $entityManagerInterface->flush();
+
+            return $this->redirectToRoute("admin_list_product");
+        }
+
+        return $this->render("admin/productform.html.twig", ['productForm' => $productForm->createView()]);
     }
 
-
     /**
-     * @Route("/admin/add/product/", name="admin_add_product")
+     * @Route("admin/create/product/", name="admin_create_product")
      */
-    public function adminCreateProduct(EntityManagerInterface $entityManagerInterface, Request $request)
-    {
+    public function createProduct(
+        EntityManagerInterface $entityManagerInterface,
+        Request $request
+    ) {
         $product = new Product();
 
         $productForm = $this->createForm(ProductType::class, $product);
@@ -59,59 +71,30 @@ class AdminProductController extends AbstractController
         $productForm->handleRequest($request);
 
         if ($productForm->isSubmitted() && $productForm->isValid()) {
-
             $entityManagerInterface->persist($product);
             $entityManagerInterface->flush();
-            $this->addFlash('notice', 'Votre produit a été créé.');
 
-            return $this->redirectToRoute('admin_product_list');
+            return $this->redirectToRoute("admin_list_product");
         }
 
-        return $this->render('admin/product_add.html.twig', ['productForm' => $productForm->createView()]);
+        return $this->render("admin/productform.html.twig", ['productForm' => $productForm->createView()]);
     }
 
-
-
     /**
-     * @Route("/admin/update/product/{id}", name="admin_update_product")
+     * @Route("admin/delete/product/{id}", name="admin_delete_product")
      */
-    public function adminUpdateProduct(
+    public function deleteProduct(
         $id,
-        EntityManagerInterface $entityManagerInterface,
-        Request $request,
-        ProductRepository $productRepository
+        ProductRepository $productRepository,
+        EntityManagerInterface $entityManagerInterface
     ) {
 
         $product = $productRepository->find($id);
 
-        $productForm = $this->createForm(ProductType::class, $product);
-
-        $productForm->handleRequest($request);
-
-        if ($productForm->isSubmitted() && $productForm->isValid()) {
-
-            $entityManagerInterface->persist($product);
-            $entityManagerInterface->flush();
-            $this->addFlash('notice', 'Le produit a été modifié.');
-
-            return $this->redirectToRoute('admin_product_list');
-        }
-
-        return $this->render('admin/product_add.html.twig', ['productForm' => $productForm->createView()]);
-    }
-
-
-    /**
-     * @Route("/admin/delete/product/{id}", name="admin_delete_product")
-     */
-    public function adminDeleteProduct($id, ProductRepository $productRepository, EntityManagerInterface $entityManagerInterface)
-    {
-        $product = $productRepository->find($id);
-
         $entityManagerInterface->remove($product);
-        $entityManagerInterface->flush();
-        $this->addFlash('notice', 'Votre produit a été supprimé');
 
-        return $this->redirectToRoute('admin_list_product');
+        $entityManagerInterface->flush();
+
+        return $this->redirectToRoute("admin_list_product");
     }
 }

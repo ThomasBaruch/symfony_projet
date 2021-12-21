@@ -6,16 +6,15 @@ use App\Entity\Licence;
 use App\Form\LicenceType;
 use App\Repository\LicenceRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class AdminLicenceController extends AbstractController
 {
     /**
-     *@Route("/admin/licences", name="admin_licence_list")
+     * @Route("/admin/licences/", name="admin_list_licence")
      */
     public function listLicence(LicenceRepository $licenceRepository)
     {
@@ -24,11 +23,10 @@ class AdminLicenceController extends AbstractController
         return $this->render("admin/licences.html.twig", ['licences' => $licences]);
     }
 
-
     /**
      * @Route("admin/licence/{id}", name="admin_show_licence")
      */
-    public function showLicence(LicenceRepository $licenceRepository, $id)
+    public function showLicence($id, LicenceRepository $licenceRepository)
     {
         $licence = $licenceRepository->find($id);
 
@@ -36,38 +34,33 @@ class AdminLicenceController extends AbstractController
     }
 
     /**
-     * @Route("/admin/search/", name="admin_search")
+     * @Route("admin/update/licence/{id}", name="admin_update_licence")
      */
-    public function adminSearch(LicenceRepository $licenceRepository, Request $request)
-    {
-        $term = $request->query->get('term');
-
-        $licences = $licenceRepository->searchByTerm($term);
-
-        return $this->render('admin/search.html.twig', ['licences' => $licences]);
-    }
-
-
-    /**
-     * @Route("admin/add/licence/", name="admin_licence_add")
-     */
-    public function createLicence(Request $request, EntityManagerInterface $entityManagerInterface, SluggerInterface $sluggerInterface)
-    {
-        $licence = new Licence();
+    public function updateLicence(
+        $id,
+        LicenceRepository $licenceRepository,
+        EntityManagerInterface $entityManagerInterface,
+        Request $request,
+        SluggerInterface $sluggerInterface
+    ) {
+        $licence = $licenceRepository->find($id);
 
         $licenceForm = $this->createForm(LicenceType::class, $licence);
 
         $licenceForm->handleRequest($request);
 
-        if($licenceForm->isSubmitted() && $licenceForm->isValid()){
+        if ($licenceForm->isSubmitted() && $licenceForm->isValid()) {
 
-            $licenceFile = $licenceForm->get('media')->getData();
+            $mediaFile = $licenceForm->get('media')->getData();
 
-            if($licenceFile){
-                $originalFilename = pathinfo($licenceFile->getClientOriginalName(), PATHINFO_FILENAME);
+            if ($mediaFile) {
+                $originalFilename = pathinfo($mediaFile->getClientOriginalName(), PATHINFO_FILENAME);
+
                 $safeFilename = $sluggerInterface->slug($originalFilename);
-                $newFilename = $safeFilename . '-' . uniqid() . '.' .$licenceFile->guessExtension();
-                $licenceFile->move(
+
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $mediaFile->guessExtension();
+
+                $mediaFile->move(
                     $this->getParameter('images_directory'),
                     $newFilename
                 );
@@ -78,54 +71,64 @@ class AdminLicenceController extends AbstractController
             $entityManagerInterface->persist($licence);
             $entityManagerInterface->flush();
 
-            return $this->redirectToRoute("admin_licence_list");
-
+            return $this->redirectToRoute("admin_list_licence");
         }
 
-        return $this->render('admin/licenceupdate.html.twig', ['licenceForm' => $licenceForm->createView()]);
+        return $this->render("front/licenceform.html.twig", ['licenceForm' => $licenceForm->createView()]);
     }
 
-
     /**
-     * @Route("admin/update/licence/{id}", name="admin_licence_update")
+     * @Route("admin/create/licence/", name="admin_create_licence")
      */
-    public function licencetUpdate(
-        $id,
-        LicenceRepository $licenceRepository,
+    public function createLicence(
         EntityManagerInterface $entityManagerInterface,
-        Request $request
+        Request $request,
+        SluggerInterface $sluggerInterface
     ) {
-        $licence = $licenceRepository->find($id);
+        $licence = new Licence();
 
         $licenceForm = $this->createForm(LicenceType::class, $licence);
 
         $licenceForm->handleRequest($request);
 
         if ($licenceForm->isSubmitted() && $licenceForm->isValid()) {
+
+            $mediaFile = $licenceForm->get('media')->getData();
+
+            if ($mediaFile) {
+                $originalFilename = pathinfo($mediaFile->getClientOriginalName(), PATHINFO_FILENAME);
+
+                $safeFilename = $sluggerInterface->slug($originalFilename);
+
+                $newFilename = $safeFilename . '-' . uniqid() . '.' . $mediaFile->guessExtension();
+
+                $mediaFile->move(
+                    $this->getParameter('images_directory'),
+                    $newFilename
+                );
+
+                $licence->setMedia($newFilename);
+            }
+
             $entityManagerInterface->persist($licence);
             $entityManagerInterface->flush();
 
-            return $this->redirectToRoute('admin_licence_list');
+            return $this->redirectToRoute("admin_list_licence");
         }
 
-        return $this->render('admin/licenceupdate.html.twig', ['licenceForm' => $licenceForm->createView()]);
+        return $this->render("admin/licenceform.html.twig", ['licenceForm' => $licenceForm->createView()]);
     }
-
 
     /**
-     * @Route("admin/delete/licence/{id}", name="admin_licence_delete")
+     * @Route("/admin/delete/{id}", name="admin_delete_licence")
      */
-    public function deleteLicence($id, LicenceRepository $licenceRepository, EntityManagerInterface $entityManagerInterface)
+    public function deleteLicence($id, EntityManagerInterface $entityManagerInterface, LicenceRepository $licenceRepository)
     {
         $licence = $licenceRepository->find($id);
+
         $entityManagerInterface->remove($licence);
         $entityManagerInterface->flush();
-        $this->addFlash(
-            'notice',
-            'Votre licence a été supprimé'
-        );
 
-        return $this->redirectToRoute("admin_licence_list");
+        return $this->redirectToRoute("admin_list_licence");
     }
 }
-

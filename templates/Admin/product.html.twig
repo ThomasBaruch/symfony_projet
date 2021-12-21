@@ -6,6 +6,10 @@
 	<h3>{{ product.price }}</h3>
 	<h3>{{ product.stock }}</h3>
 
+	{% for image in product.media %}
 
+		<img src="{{ image.src }}" alt="{{ image.alt }}">
+
+	{% endfor %}
 
 {% endblock %}

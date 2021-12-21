@@ -35,14 +35,16 @@ class Product
     private $stock;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="products")
-     */
-    private $category;
-
-    /**
      * @ORM\ManyToOne(targetEntity=Licence::class, inversedBy="products")
+     * @ORM\JoinColumn(name="licence_id", referencedColumnName="id", onDelete="CASCADE")
      */
     private $licence;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="products")
+     * @ORM\JoinColumn(name="categoty_id", referencedColumnName="id", onDelete="CASCADE")
+     */
+    private $category;
 
     /**
      * @ORM\OneToMany(targetEntity=Media::class, mappedBy="product")
@@ -95,18 +97,6 @@ class Product
         return $this;
     }
 
-    public function getCategory(): ?Category
-    {
-        return $this->category;
-    }
-
-    public function setCategory(?Category $category): self
-    {
-        $this->category = $category;
-
-        return $this;
-    }
-
     public function getLicence(): ?Licence
     {
         return $this->licence;
@@ -115,6 +105,18 @@ class Product
     public function setLicence(?Licence $licence): self
     {
         $this->licence = $licence;
+
+        return $this;
+    }
+
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Category $category): self
+    {
+        $this->category = $category;
 
         return $this;
     }

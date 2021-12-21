@@ -1,0 +1,22 @@
+
+{% extends "front/base.html.twig" %}
+
+
+{%  block main %}
+	<h1>Bienvenue sur Super-eDiscount</h1>
+	<h2>Vous trouverez tous sur les super-héros et leurs produits dérivés</h2>
+	<div class="alea">
+		{% for product  in category.products | slice(0, 3) %}
+			<div class="col">
+				<a href="{{ path('front_show_product', {'id' : product.id}) }}">
+					<img src="{{ product.media[0].src }}" alt="{{ product.media[0].alt }}">
+				</a>
+			</div>
+		{% endfor %}
+	</div>
+	<div class="plus">
+		<a href="{{ path('front_product_list') }}">
+			EN SAVOIR PLUS !
+		</a>
+	</div>
+{%  endblock %}
